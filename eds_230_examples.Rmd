@@ -1,0 +1,59 @@
+---
+title: "Class Examples"
+author: "Alex Vand"
+date: "4/7/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+percent_change_gnp = function(percent_change_unemployment_rate){
+  percent_change_gnp <- 0.856 - 1.827 * percent_change_unemployment_rate
+  return(percent_change_gnp)
+}
+```
+
+
+
+```{r}
+percent_change_gnp(3)
+```
+
+
+
+```{r}
+percent_change_gnp = function(percent_change_unemployment_rate){
+  percent_change_gnp <- 0.856 - 10 * percent_change_unemployment_rate
+  return(percent_change_gnp)
+}
+```
+
+
+```{r}
+percent_change_gnp(3)
+```
+
+
+
+
+```{r}
+percent_change_gnp = function(percent_change_unemployment_rate,
+                              intercept,
+                              slope){
+  percent_change_gnp <- intercept + slope * percent_change_unemployment_rate
+  return(percent_change_gnp)
+}
+```
+
+
+
+```{r}
+percent_change_gnp(3, 0.856, -1.827)
+```
