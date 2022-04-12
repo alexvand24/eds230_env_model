@@ -57,3 +57,24 @@ percent_change_gnp = function(percent_change_unemployment_rate,
 ```{r}
 percent_change_gnp(3, 0.856, -1.827)
 ```
+
+
+
+
+2022-04-12
+
+```{r}
+source("R/compute_diversity.R")
+```
+
+
+```{r}
+flower_species <- c("iris", "daisy", "rose", "tulip", "lily", "sunflower")
+```
+
+
+
+
+
+
+
