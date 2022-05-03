@@ -341,10 +341,28 @@ Change parameters (diffusivity D, and space and time steps (dx, dt))
 ```{r}
 # changes diffusivity and other parameters particularly
 # diffusivity, dx and dt
-res=diff1(initialC=10,nx=10,dx=1,nt=10,dt=30,D=0.006,area=1)
+#res=diff1(initialC=10,nx=10,dx=1,nt=10,dt=30,D=0.006,area=1)
 
 #compare above res and below
-#res=diff1(initialC=10, nx=10, dx=1, nt=8, dt=1, D=0.5, area=10)
+res=diff1(initialC=10, nx=10, dx=1, nt=8, dt=1, D=0.5, area=10)
+
+filled.contour(res$conc, xlab="Time", ylab="Distance")
+# we can also see how much material moved from place to place each time step
+filled.contour(res$qin, xlab="Time", ylab="Distance")
+# play with time step, space step and parameters
+```
+
+
+
+
+```{r}
+# changes diffusivity and other parameters particularly
+# diffusivity, dx and dt
+res=diff1(initialC=10,nx=10,dx=1,nt=10,dt=30,D=0.006,area=1)
+#long dragged out is original
+
+#compare above res and below
+#res=diff1(initialC=10, nx=10, dx=1, nt=10, dt=30, D=006, area=1)
 
 filled.contour(res$conc, xlab="Time", ylab="Distance")
 # we can also see how much material moved from place to place each time step
