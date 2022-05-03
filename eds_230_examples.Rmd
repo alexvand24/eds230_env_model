@@ -5,7 +5,7 @@ date: "4/7/2022"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -93,20 +93,21 @@ library(sensitivity)
 
 #2022-04-28
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(purrr)
 ```
 
-# Implementing Dynamic Models in R
+Implementing Dynamic Models in R
 
 Dynamic models always involves derivatives (equations that express how things change from time step to time step or place to place )
 
 
 Implement population **growth** as a derivative - a model of population change
 
-```{r derivaties, echo=TRUE}
+```{r, echo=TRUE}
+# derivatives
 # note that we include time here but we don't use it; we will need this later
 source("R/dexppop.R")
 
@@ -130,7 +131,7 @@ ggplot(pdyn, aes(pops, pchange))+geom_point(col="green", size=1.5)
 # try this - add a carrying capacity (dP/dt = 0 if P > carryingcapacity)
 ```
 
-# Integration
+Integration
 
 What if we wanted to look at population in 20 years given an initial condition
 
@@ -140,10 +141,11 @@ Two options
 
 * must be solved by iteration; this is what we do when we can't integrate both sides 
 
-# Explicit Solution is available
+Explicit Solution is available
 
 
-```{r explicit}
+```{r}
+# explicit
 source("R/exppop.R")
 # gives population after any time given an initial population
 # 20 rabbits, growth rate of 0.01 how many in 30 years
@@ -193,7 +195,7 @@ Ptime = ode(y=initialrabbits, times=years, func=dexppop,parms=c(0.01))
 head(Ptime)
 ```
 
-# additional parameters 
+additional parameters 
 
 You can play a bit with changing your function to something that you can't integrate "by hand"
 
@@ -204,7 +206,7 @@ parameters must all be input as a single list; similar to how we return multiple
 
 see example below..lets add a carrying capacity
 
-# R code with carrying capacity
+R code with carrying capacity
 
 ```{r}
 source("R/dexppop_play.R")
@@ -234,19 +236,20 @@ ggplot(both_p, aes(year,P, col=model))+geom_point()+labs(y="Population", "years"
 # try playing on your own - modify the function in some way
 ```
 
-# Difference Equations 
+Difference Equations 
 
 What is ODE doing? (iterating in 'smart ways')
 
 Similar to "difference equations"
 
-## Difference Equations
+Difference Equations
 
 Population models can be discrete (rather than continuous)
 So we could implement them as difference equations and iterate
 
 
-```{r iteratie}
+```{r}
+#iterate
 source("R/discrete_logistic_pop.R")
 # notice how a for loop is used to iterate
 # how many rabbits after 50 years given a growth of 0.1
@@ -262,7 +265,7 @@ K=200
 T=50
 ```
 
-# Differential Equation, Difference (Iteration by hand) comparison
+Differential Equation, Difference (Iteration by hand) comparison
 
 Remember we have 3 ways now to calculate population
 
@@ -271,7 +274,9 @@ analytical solution - based on integration (exppop.R) BEST
 using an ode solver for numerical approximation (exppop_play.R)
 
 numerical integration using in discrete steps (discrete_logistic_pop.R)
-```{r closed}
+
+```{r}
+#closed
 source("R/exppop.R")
 exppop(P0=P0, r=r, K=K, T=T)
 analytic_result = exppop(P0=P0, r=r, K=K, T=T)
@@ -288,11 +293,11 @@ ggplot(tmp, aes(time,P, col=Ptype))+geom_point()
 # change the value of r, K , P0 - see how it effects the results
 ```
 
-# Compare analytical, difference and ODE
+Compare analytical, difference and ODE
 
 Finally look at continuous derivative using ODE solve
 Needs
-*initial condtions
+*initial conditions
 *differential equation
 *parameters
 
@@ -306,8 +311,43 @@ result = ode(P0, growth_result$time, dexppop_play, pcompare)
 head(result)
 # we already have time - so just extract population
 growth_result$Pdifferential = result[,2]
-# comapre all 3 approaches
+# compare all 3 approaches
 tmp = growth_result %>% gather(key="Ptype",value="P",-time)
 ggplot(tmp, aes(time,P, col=Ptype))+geom_point()
 # notice Pdifferential is closer to Panalytic than Pdiscrete
+```
+
+
+
+Diffusion
+
+
+```{r}
+source("R/diffusion.R")
+# run our diffusion model (iterative difference equation) with initial concentration of 10, for 8 timestep (size 1m), and 10 space steps (size 1s)
+# using diffusion parameters 0.5 s/m2, 10 m2
+result = diff1(initialC=10, nx=10, dx=1, nt=8, dt=1, D=0.5, area=10)
+# a list is returned with our 3 data frames for concentration (conc), qin and qout
+result
+# used filled contour to plot results
+head(result$conc)
+filled.contour(result$conc, xlab="Time", ylab="Distance")
+# or if you prefer this orientation (Distance on x axis)
+filled.contour(t(result$conc), ylab="Time", xlab="Distance")
+```
+
+Change parameters (diffusivity D, and space and time steps (dx, dt))
+
+```{r}
+# changes diffusivity and other parameters particularly
+# diffusivity, dx and dt
+res=diff1(initialC=10,nx=10,dx=1,nt=10,dt=30,D=0.006,area=1)
+
+#compare above res and below
+#res=diff1(initialC=10, nx=10, dx=1, nt=8, dt=1, D=0.5, area=10)
+
+filled.contour(res$conc, xlab="Time", ylab="Distance")
+# we can also see how much material moved from place to place each time step
+filled.contour(res$qin, xlab="Time", ylab="Distance")
+# play with time step, space step and parameters
 ```
