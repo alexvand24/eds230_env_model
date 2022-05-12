@@ -369,3 +369,29 @@ filled.contour(res$conc, xlab="Time", ylab="Distance")
 filled.contour(res$qin, xlab="Time", ylab="Distance")
 # play with time step, space step and parameters
 ```
+
+
+
+
+# 2022-05-12
+
+```{r}
+source("R/av_dharvest.R")
+```
+
+```{r}
+# given some forest characteristics - lets look at derivatives under different harvest rates
+lowHrate = 10
+gps = list(harv=lowHrate, K=1000, r=0.05)
+
+# look at the derivative over a range of forest sizes
+
+findstable = data.frame(Ccurr=seq(from=1, to=1000, by=10))
+# notice use of Time=NULL, and map to compute derivative
+# for different values of forest biomass
+findstable$dervHlow= unlist(findstable$Ccurr %>% map(~dharvest(parms=gps, Time=NULL, P=.x) ))
+                                                  
+ggplot(findstable, aes(Ccurr, dervHlow))+geom_point()+geom_hline(yintercept = 0, col="red")+
+  labs(y="Derivative\n (Rate of change of forest carbon) (kg/C/year)", x="Current Forest Carbon Stock (kgC)")
+```
+
